@@ -13,7 +13,7 @@ export default defineConfig(({ command }) => {
     root: 'src',
     build: {
       sourcemap: true,
-      outDir: '../dist',
+      outDir: '../dist', // sadece burada tek sefer tanımlı
       rollupOptions: {
         input: {
           main: 'src/index.html',
@@ -40,7 +40,6 @@ export default defineConfig(({ command }) => {
           },
         },
       },
-      outDir: '../dist',
       emptyOutDir: true,
     },
     plugins: [
