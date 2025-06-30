@@ -9,11 +9,17 @@ export default defineConfig(({ command }) => {
     define: {
       [command === 'serve' ? 'global' : '_global']: {},
     },
+    base: '/goit-js-hw-09/',
     root: 'src',
     build: {
       sourcemap: true,
+      outDir: '../dist',
       rollupOptions: {
-        input: glob.sync('./src/*.html'),
+        input: {
+          main: 'src/index.html',
+          gallery: 'src/01-gallery.html',
+          form: 'src/02-form.html',
+        },
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
