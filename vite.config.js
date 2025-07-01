@@ -13,12 +13,12 @@ export default defineConfig(({ command }) => {
     root: 'src',
     build: {
       sourcemap: true,
-      outDir: '../dist', // sadece burada tek sefer tanımlı
+      outDir: '../dist',
       rollupOptions: {
         input: {
           main: 'src/index.html',
-          gallery: 'src/01-gallery.html',
-          form: 'src/02-form.html',
+          gallery: 'src/1-gallery.html',
+          form: 'src/2-form.html',
         },
         output: {
           manualChunks(id) {
