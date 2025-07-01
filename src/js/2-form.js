@@ -1,37 +1,58 @@
 const form = document.querySelector('.feedback-form');
-const savedData = JSON.parse(localStorage.getItem('feedback-form-state')) || {};
+const emailInput = form.elements.email;
+const messageInput = form.elements.message;
+const STORAGE_KEY = 'feedback-form-state';
 
-form.elements.message.value = savedData.message ?? '';
-form.elements.email.value = savedData.email ?? '';
+const formData = {
+  email: '',
+  message: '',
+};
 
-const formData = { ...savedData };
+const loadFormData = () => {
+  const savedData = localStorage.getItem(STORAGE_KEY);
+  if (savedData) {
+    try {
+      const parsedData = JSON.parse(savedData);
+      if (typeof parsedData.email === 'string') {
+        formData.email = parsedData.email.trim();
+        emailInput.value = formData.email;
+      }
+      if (typeof parsedData.message === 'string') {
+        formData.message = parsedData.message.trim();
+        messageInput.value = formData.message;
+      }
+    } catch (error) {
+      console.error('Failed to parse saved form data:', error);
+    }
+  }
+};
 
-form.addEventListener('input', function (e) {
-  formData[e.target.name] = e.target.value;
+form.addEventListener('input', event => {
+  const { name, value } = event.target;
 
-  localStorage.setItem('feedback-form-state', JSON.stringify(formData));
+  if (name in formData) {
+    formData[name] = value.trim();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+  }
 });
 
-form.addEventListener('submit', function (e) {
-  e.preventDefault();
+form.addEventListener('submit', event => {
+  event.preventDefault();
 
-  if (
-    e.target.elements.message.value === '' ||
-    e.target.elements.email.value === ''
-  ) {
-    alert('Please fill in all fields');
+  const { email, message } = formData;
+
+  if (!email || !message) {
+    alert('Please fill in both the email and message fields.');
     return;
   }
 
-  console.log({
-    message: e.target.elements.message.value,
-    email: e.target.elements.email.value,
-  });
+  console.log({ email, message });
 
-  localStorage.removeItem('feedback-form-state');
+  localStorage.removeItem(STORAGE_KEY);
+  form.reset();
 
   formData.email = '';
   formData.message = '';
-
-  form.reset();
 });
+
+loadFormData();
