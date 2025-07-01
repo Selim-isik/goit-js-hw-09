@@ -1,54 +1,37 @@
 const form = document.querySelector('.feedback-form');
-const emailInput = form.querySelector('input[name="email"]');
-const messageInput = form.querySelector('textarea[name="message"]');
-const storageKey = 'feedback-form-state';
+const savedData = JSON.parse(localStorage.getItem('feedback-form-state')) || {};
 
-const formData = {
-  email: '',
-  message: '',
-};
+form.elements.message.value = savedData.message ?? '';
+form.elements.email.value = savedData.email ?? '';
 
-const loadFormData = () => {
-  const savedData = localStorage.getItem(storageKey);
-  if (savedData) {
-    try {
-      const parsedData = JSON.parse(savedData);
-      formData.email = parsedData.email || '';
-      formData.message = parsedData.message || '';
-      emailInput.value = formData.email;
-      messageInput.value = formData.message;
-    } catch (error) {
-      console.error('Failed to parse saved form data', error);
-    }
-  }
-};
+const formData = { ...savedData };
 
-const saveFormData = () => {
-  formData.email = emailInput.value.trim();
-  formData.message = messageInput.value.trim();
+form.addEventListener('input', function (e) {
+  formData[e.target.name] = e.target.value;
 
-  localStorage.setItem(storageKey, JSON.stringify(formData));
-};
+  localStorage.setItem('feedback-form-state', JSON.stringify(formData));
+});
 
-const handleSubmit = event => {
-  event.preventDefault();
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
 
-  if (!formData.email || !formData.message) {
-    alert('Please fill in both email and message fields');
+  if (
+    e.target.elements.message.value === '' ||
+    e.target.elements.email.value === ''
+  ) {
+    alert('Please fill in all fields');
     return;
   }
 
-  console.log(formData);
+  console.log({
+    message: e.target.elements.message.value,
+    email: e.target.elements.email.value,
+  });
 
-  localStorage.removeItem(storageKey);
-
-  form.reset();
+  localStorage.removeItem('feedback-form-state');
 
   formData.email = '';
   formData.message = '';
-};
 
-loadFormData();
-
-form.addEventListener('input', saveFormData);
-form.addEventListener('submit', handleSubmit);
+  form.reset();
+});
